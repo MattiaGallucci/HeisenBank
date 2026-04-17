@@ -1,2 +1,6 @@
 /dataset/Base.csv
 Progetto TQS_ Quantum Fraud Detection & Hybrid Key Exchange.md
+
+.venv/
+__pycache__/
+*.pyc

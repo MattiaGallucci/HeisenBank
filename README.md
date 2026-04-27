@@ -4,17 +4,10 @@
 
 ## 🌌 Project Overview
 
-The project is structured into two fundamental pillars that redefine how financial institutions detect anomalies and secure sensitive communications:
-
-### 1. Quantum Fraud Detection (QML)
+### Quantum Fraud Detection (QML)
 Utilizing a **Variational Quantum Classifier (VQC)**, HeisenBank analyzes transaction data to identify patterns invisible to classical algorithms.
 * **Hilbert Space Advantage**: Maps transaction features into an exponentially large dimensional space for superior separation between legitimate and fraudulent activities.
 * **Quantum Entanglement**: Captures complex inter-dependencies between transaction variables (e.g., location, time, and amount) using advanced quantum ansatz designs.
-
-### 2. Quantum-Secure Communications (PQC)
-To protect against the threat of future quantum computers, HeisenBank implements a **Hybrid Key Exchange** mechanism to secure the transmission of fraud alerts.
-* **NIST-Standard Security**: Combines classical ECDH (X25519) with the Kyber (ML-KEM) lattice-based algorithm.
-* **Future-Proof Shield**: Ensures "Harvest Now, Decrypt Later" resistance, maintaining confidentiality even in a post-Shor world.
 
 ## 🛠️ Technology Stack
 

@@ -35,12 +35,12 @@ Mappa i dati classici nello spazio quantistico (Hilbert space) tramite:
 - Gate **CNOT + Phase** per catturare le correlazioni tra coppie di feature adiacenti (entanglement lineare)
 - **4 qubit**, 1 ripetizione
 
-#### Ansatz — Circuito Custom
-Ansatz variazionale costruito manualmente con:
-- **Rotazioni `Ry(θ)`** parametriche su ogni qubit
-- **Entanglement circolare** via gate `CX`: ogni qubit è connesso al successivo, e l'ultimo qubit si riconnette al primo (topologia ad anello)
-- **3 ripetizioni** (layer di rotazione + entanglement), seguite da un **layer finale di sole rotazioni** senza entanglement
-- **16 parametri** totali ottimizzabili
+#### Ansatz — `EfficientSU2`
+Ansatz variazionale predefinito dalla libreria Qiskit:
+- **Rotazioni `Ry(θ)` e `Rz(θ)`** parametriche su ogni qubit per ogni layer
+- **Entanglement lineare** via gate `CX`: ogni qubit è connesso al successivo (0→1→2→3)
+- **1 ripetizione** (`reps=1`): 2 layer di rotazioni separati da 1 layer di entanglement
+- **16 parametri** totali ottimizzabili (4 qubit × 2 gate × 2 layer)
 
 Questa architettura offre maggiore espressività rispetto ai circuiti predefiniti come `EfficientSU2`, mantenendo lo stesso numero di parametri ma distribuendoli su più layer con una connettività più ricca.
 
@@ -79,7 +79,7 @@ La valutazione del modello include:
 HeisenBank/
 ├── dataset/
 │   └── Base.csv              # Dataset delle transazioni
-├── qml_fil.ipynb             # Pipeline QML principale
+├── qml.ipynb                 # Pipeline QML principale
 ├── data_exploration.ipynb    # Esplorazione e analisi dei dati
 └── README.md
 ```
@@ -95,7 +95,7 @@ HeisenBank/
 
 2. **Aprire il notebook**:
    ```bash
-   jupyter notebook qml_fil.ipynb
+   jupyter notebook qml.ipynb
    ```
 
 3. **Eseguire le celle in ordine** (1 → 4):

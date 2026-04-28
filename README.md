@@ -4,7 +4,7 @@
 
 HeisenBank è un progetto di **Quantum Machine Learning (QML)** per la rilevazione di transazioni fraudolente, sviluppato nell'ambito del corso di Tecnologie Quantistiche per la Sicurezza (TQS).
 
-Il sistema utilizza un **Variational Quantum Classifier (VQC)**, un classificatore ibrido quantistico-classico che sfrutta circuiti quantistici parametrici per classificare le transazioni come *legittime* o *fraudolente*.
+Il sistema utilizza un **Variational Quantum Classifier (VQC)**, un classificatore ibrido quantistico-classico che sfrutta circuiti quantistici parametrici per classificare le transazioni come _legittime_ o _fraudolente_.
 
 ---
 
@@ -17,7 +17,7 @@ Il pipeline è articolato in 4 fasi principali:
 - **Dataset**: `Base.csv` — dataset di transazioni bancarie con etichetta binaria `fraud_bool`
 - **Bilanciamento**: undersampling della classe maggioritaria (transazioni legittime) per ottenere un dataset bilanciato 50/50
 - **Encoding categorico**: `LabelEncoder` sulle variabili categoriche (`payment_type`, `employment_status`, `housing_status`, `source`, `device_os`)
-- **Feature selection**: Random Forest Classifier con 100 estimator per calcolare la *feature importance*, selezionando le **top 4 feature** più rilevanti:
+- **Feature selection**: Random Forest Classifier con 100 estimator per calcolare la _feature importance_, selezionando le **top 4 feature** più rilevanti:
   - `housing_status`
   - `current_address_months_count`
   - `device_os`
@@ -28,19 +28,22 @@ Il pipeline è articolato in 4 fasi principali:
 
 Il circuito VQC è composto da due blocchi:
 
-#### Feature Map — `ZZFeatureMap`
-Mappa i dati classici nello spazio quantistico (Hilbert space) tramite:
-- Gate **Hadamard** per la superposizione iniziale
-- Gate **Phase** per l'encoding delle singole feature
-- Gate **CNOT + Phase** per catturare le correlazioni tra coppie di feature adiacenti (entanglement lineare)
-- **4 qubit**, 1 ripetizione
+#### Feature Map — Custom
 
-#### Ansatz — `EfficientSU2`
-Ansatz variazionale predefinito dalla libreria Qiskit:
-- **Rotazioni `Ry(θ)` e `Rz(θ)`** parametriche su ogni qubit per ogni layer
-- **Entanglement lineare** via gate `CX`: ogni qubit è connesso al successivo (0→1→2→3)
-- **1 ripetizione** (`reps=1`): 2 layer di rotazioni separati da 1 layer di entanglement
-- **16 parametri** totali ottimizzabili (4 qubit × 2 gate × 2 layer)
+Mappa i dati classici nello spazio di Hilbert tramite un circuito custom ottimizzato:
+
+- **Hadamard + Ry**: Gate iniziali per creare superposizione e codificare i valori delle feature come angoli di rotazione.
+- **Entanglement Non Lineare**: Utilizza gate `Rz` basati sul prodotto delle feature ($x_i \cdot x_j$) tra gate `CNOT` per catturare correlazioni complesse tra tutte le coppie di variabili.
+- **Configurazione**: 4 qubit, 2 ripetizioni (`reps=2`).
+
+#### Ansatz — Custom
+
+Architettura variazionale progettata per massimizzare la connettività tra qubit:
+
+- **Rotazioni Parametriche `Ry(θ)`**: Layer di rotazione addestrabili su ogni qubit per mappare le classi nel piano quantistico.
+- **Circular Entanglement**: Connessione circolare tramite gate `CX` (ogni qubit è connesso al successivo e l'ultimo si riconnette al primo) per garantire una diffusione omogenea dell'informazione.
+- **Layer Finale**: Layer di rotazione Ry aggiuntivo per stabilizzare l'output e aumentare l'espressività del modello.
+- **Parametri**: 4 qubit, 3 ripetizioni (`reps=3`), per un totale di **16 parametri** ottimizzabili.
 
 Questa architettura offre maggiore espressività rispetto ai circuiti predefiniti come `EfficientSU2`, mantenendo lo stesso numero di parametri ma distribuendoli su più layer con una connettività più ricca.
 
@@ -56,6 +59,7 @@ Questa architettura offre maggiore espressività rispetto ai circuiti predefinit
 ### 4. Valutazione
 
 La valutazione del modello include:
+
 - **Curva ROC** e calcolo dell'**AUC** (Area Under Curve)
 - **Soglia ottimale** determinata tramite l'indice di Youden (massimizzazione di `TPR - FPR`)
 - **Matrice di confusione** con soglia ottimizzata
@@ -65,13 +69,13 @@ La valutazione del modello include:
 
 ## Stack Tecnologico
 
-| Componente | Tecnologia |
-|---|---|
+| Componente    | Tecnologia                                                                                                             |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | Framework QML | [Qiskit](https://qiskit.org/) + [Qiskit Machine Learning](https://qiskit-community.github.io/qiskit-machine-learning/) |
-| Simulatore | `StatevectorSampler` (Qiskit Primitives) |
-| Ottimizzatore | `SPSA` (Qiskit Algorithms) |
-| ML Classico | scikit-learn |
-| Linguaggio | Python 3.12 |
+| Simulatore    | `StatevectorSampler` (Qiskit Primitives)                                                                               |
+| Ottimizzatore | `SPSA` (Qiskit Algorithms)                                                                                             |
+| ML Classico   | scikit-learn                                                                                                           |
+| Linguaggio    | Python 3.12                                                                                                            |
 
 ## Struttura del Progetto
 
@@ -89,11 +93,13 @@ HeisenBank/
 ## Come Eseguire
 
 1. **Installare le dipendenze**:
+
    ```bash
    pip install qiskit qiskit-machine-learning qiskit-algorithms scikit-learn pandas matplotlib
    ```
 
 2. **Aprire il notebook**:
+
    ```bash
    jupyter notebook qml.ipynb
    ```

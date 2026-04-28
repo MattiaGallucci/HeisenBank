@@ -28,19 +28,18 @@ Il pipeline è articolato in 4 fasi principali:
 
 Il circuito VQC è composto da due blocchi:
 
-#### Feature Map — `ZZFeatureMap`
-Mappa i dati classici nello spazio quantistico (Hilbert space) tramite:
-- Gate **Hadamard** per la superposizione iniziale
-- Gate **Phase** per l'encoding delle singole feature
-- Gate **CNOT + Phase** per catturare le correlazioni tra coppie di feature adiacenti (entanglement lineare)
-- **4 qubit**, 1 ripetizione
+#### Feature Map — Custom High-Order Encoding
+Mappa i dati classici nello spazio di Hilbert tramite un circuito custom ottimizzato:
+- **Hadamard + Ry**: Gate iniziali per creare superposizione e codificare i valori delle feature come angoli di rotazione.
+- **Entanglement Non Lineare**: Utilizza gate `Rz` basati sul prodotto delle feature ($x_i \cdot x_j$) tra gate `CNOT` per catturare correlazioni complesse tra tutte le coppie di variabili.
+- **Configurazione**: 4 qubit, 2 ripetizioni (`reps=2`).
 
-#### Ansatz — `EfficientSU2`
-Ansatz variazionale predefinito dalla libreria Qiskit:
-- **Rotazioni `Ry(θ)` e `Rz(θ)`** parametriche su ogni qubit per ogni layer
-- **Entanglement lineare** via gate `CX`: ogni qubit è connesso al successivo (0→1→2→3)
-- **1 ripetizione** (`reps=1`): 2 layer di rotazioni separati da 1 layer di entanglement
-- **16 parametri** totali ottimizzabili (4 qubit × 2 gate × 2 layer)
+#### Ansatz — Custom Circular Entanglement
+Architettura variazionale progettata per massimizzare la connettività tra qubit:
+- **Rotazioni Parametriche `Ry(θ)`**: Layer di rotazione addestrabili su ogni qubit per mappare le classi nel piano quantistico.
+- **Circular Entanglement**: Connessione circolare tramite gate `CX` (ogni qubit è connesso al successivo e l'ultimo si riconnette al primo) per garantire una diffusione omogenea dell'informazione.
+- **Layer Finale**: Layer di rotazione Ry aggiuntivo per stabilizzare l'output e aumentare l'espressività del modello.
+- **Parametri**: 4 qubit, 3 ripetizioni (`reps=3`), per un totale di **16 parametri** ottimizzabili.
 
 ### 3. Addestramento
 
